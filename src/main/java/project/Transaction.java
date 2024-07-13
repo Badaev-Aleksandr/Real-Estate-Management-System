@@ -1,9 +1,13 @@
 package project;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
-
+@Getter
+@Setter
 public class Transaction implements Serializable{
     private static final long serialVersionUID = 1L;
     private Property property;//объект недвижимости
@@ -35,45 +39,6 @@ public class Transaction implements Serializable{
         return Objects.hash(property, client, localDate, transactionType, transactionAmount);
     }
 
-    public Property getProperty() {
-        return property;
-    }
-
-    public void setProperty(Property property) {
-        this.property = property;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public LocalDate getLocalDate() {
-        return localDate;
-    }
-
-    public void setLocalDate(LocalDate localDate) {
-        this.localDate = localDate;
-    }
-
-    public TransactionType getTransactionType() {
-        return transactionType;
-    }
-
-    public void setTransactionType(TransactionType transactionType) {
-        this.transactionType = transactionType;
-    }
-
-    public double getTransactionAmount() {
-        return transactionAmount;
-    }
-
-    public void setTransactionAmount(double transactionAmount) {
-        this.transactionAmount = transactionAmount;
-    }
 
     @Override
     public String toString() {

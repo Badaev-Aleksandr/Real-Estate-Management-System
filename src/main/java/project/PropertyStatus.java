@@ -1,5 +1,5 @@
 package project;
 
-public enum StatusOfProperty {
+public enum PropertyStatus {
 AVAILABLE,RESERVED,SOLD;
 }

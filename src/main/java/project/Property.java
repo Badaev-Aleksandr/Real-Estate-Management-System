@@ -1,7 +1,6 @@
 package project;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,10 +12,10 @@ public class Property implements Serializable {
     private PropertyTyp propertyTyp; // тип недвижимости Enum
     private double price; //цена недвижимости
     private double size; // размер (кв. метры)
-    private StatusOfProperty statusOfProperty; // статус недвижимости
+    private PropertyStatus statusOfProperty; // статус недвижимости
 
     public Property(String address, PropertyTyp propertyTyp, double price, double size,
-                    StatusOfProperty statusOfProperty) {
+                    PropertyStatus statusOfProperty) {
         this.address = address;
         this.propertyTyp = propertyTyp;
         this.price = price;
@@ -46,7 +45,7 @@ public class Property implements Serializable {
         this.price = price;
     }
 
-    public void setStatusOfProperty(StatusOfProperty statusOfProperty) {
+    public void setStatusOfProperty(PropertyStatus statusOfProperty) {
         this.statusOfProperty = statusOfProperty;
     }
 
