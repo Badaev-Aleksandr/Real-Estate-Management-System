@@ -58,7 +58,7 @@ public class Main {
                 case 6:
                 case 7:
                     PropertyManager.exitFromApp();
-                    
+                    ClientsManager.exitFromApp();
                     System.out.println("До новых встреч");
                     break;
                 default:

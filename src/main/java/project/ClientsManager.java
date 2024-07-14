@@ -26,26 +26,36 @@ public class ClientsManager {
 
     //метод добавления клиентов в базу данных
     public static void addNewClient() {
-        System.out.println("Вы выбрали функцию добавления Клиента в базу данных!");
+        System.out.println("Вы выбрали функцию Добавить клиента.");
         System.out.println("Введите имя клиента: ");
-        String name = scanner.nextLine();
+        String name = scanner.nextLine().trim();
+        while (name.equalsIgnoreCase("")) {
+            System.out.println("Вы не ввели имя!");
+            System.out.println("Введите имя клиента: ");
+            name = scanner.nextLine();
+        }
         System.out.println("Введите контактные данные клиента: ");
-        String contactDate = scanner.nextLine();
+        String contactDate = scanner.nextLine().trim();
+        while (contactDate.equalsIgnoreCase("")) {
+            System.out.println("Вы не ввели контактные данные!");
+            System.out.println("Введите контактные данные клиента: ");
+            contactDate = scanner.nextLine();
+        }
         System.out.println("Введите тип клиента: (BAYER,SELLER,TENANT).");
         ClientTyp clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine());
-        while (clientTyp == ClientTyp.NONE) {
+        while (clientTyp == ClientTyp.NONE || clientTyp == null) {
             System.out.println("Вы указали неправильное значение Тип Клиента!");
             System.out.println("Введите тип клиента как указано в скобках (BAYER,SELLER,TENANT).");
             clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine());
         }
-        Client client = new Client(name.trim(), contactDate.trim(), clientTyp);
+        Client client = new Client(name, contactDate, clientTyp);
         if (!isClientAvailability(client)) {
             clientAdded = clientsList.add(client);
             log.info("Клиент {} успешно добавлен в список.", client.getName());
             saveNewClientInTextFile(client);
         } else {
-            System.out.println("Не добавлен! В базе данных есть такой клиент с контактными данными: " + client.getContactDate());
-            log.info("Клиент не добавлен!");
+            System.out.println("Не добавлен! В базе данных есть такой клиент: " + client.getName() + " с контактными данными: " + client.getContactDate());
+            log.info("Клиент {} не добавлен!", client.getName());
         }
     }
 
@@ -64,17 +74,13 @@ public class ClientsManager {
 
     //сериализация объектов в файл
     public static void saveNewClientInObjectFile(List<Client> list) {
-        if (!clientsList.isEmpty()) {
-            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
-                objectOutputStream.writeObject(list);
-                log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
-            } catch (FileNotFoundException exception) {
-                log.error("Файл {} для записи данных не найден!Error: {}", objectFile, exception.getMessage());
-            } catch (IOException exception) {
-                log.error(exception.getMessage(), exception);
-            }
-        } else {
-            System.out.println("Вы не добавляли новых клиентов");
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
+            objectOutputStream.writeObject(list);
+            log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
+        } catch (FileNotFoundException exception) {
+            log.error("Файл {} для записи данных не найден!Error: {}", objectFile, exception.getMessage());
+        } catch (IOException exception) {
+            log.error(exception.getMessage(), exception);
         }
     }
 
@@ -90,7 +96,7 @@ public class ClientsManager {
         System.out.println("Вы выбрали функцию Просмотр всех клиентов");
         System.out.println("Ниже указаны все клиенты в базе данных:");
         if (!clientsList.isEmpty()) {
-            clientsList.stream().sorted().forEach(System.out::println);
+            clientsList.forEach(System.out::println);
         } else {
             System.out.println("Список клиентов пуст");
         }
