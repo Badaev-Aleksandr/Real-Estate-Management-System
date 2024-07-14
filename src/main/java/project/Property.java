@@ -3,7 +3,7 @@ package project;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.Objects;
+
 
 @Getter
 public class Property implements Serializable {
@@ -21,20 +21,6 @@ public class Property implements Serializable {
         this.price = price;
         this.size = size;
         this.statusOfProperty = statusOfProperty;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Property property = (Property) o;
-        return Double.compare(size, property.size) == 0 && Objects.equals(address, property.address) &&
-                propertyTyp == property.propertyTyp;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(address, propertyTyp, size);
     }
 
     public void setAddress(String address) {
@@ -55,6 +41,7 @@ public class Property implements Serializable {
                 "address='" + address + '\'' +
                 ", propertyTyp=" + propertyTyp +
                 ", price=" + price +
+                ", size=" + size +
                 ", statusOfProperty=" + statusOfProperty +
                 '}';
     }

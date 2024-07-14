@@ -3,7 +3,6 @@ package project;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Getter
 public class Client implements Serializable {
@@ -30,18 +29,6 @@ public class Client implements Serializable {
         this.clientTyp = clientTyp;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Client client = (Client) o;
-        return Objects.equals(contactDate, client.contactDate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(contactDate);
-    }
 
     @Override
     public String toString() {
