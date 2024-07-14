@@ -21,7 +21,7 @@ public class TransactionManager {
     private static final File textFile = Path.of("src", "main", "resources", "transaction_base.txt").toFile();
     private static final File objectFile = Path.of("src", "main", "resources", "transaction_base.ser").toFile();
     private static Scanner scanner = new Scanner(System.in);
-    private static List<Transaction> transactionList = new ArrayList<>(readObjectFile(objectFile));
+    //private static List<Transaction> transactionList = new ArrayList<>(readObjectFile(objectFile));
     private static boolean transactionAdded = false; // флаг для сериализации клиентов если были добавлены новые
 
     //метод добавления сделки в базу данных
@@ -52,76 +52,77 @@ public class TransactionManager {
     }
 
     // Сохранение клиентов в текстовый файл
-    public static void saveNewClientInTextFile(Transaction transaction) {
-        try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
-            br.write(client.getName() + "," + client.getContactDate() + "," + client.getClientTyp());
-            br.newLine();
-            log.info("Клиент {} успешно сохранен в текстовый файл {}", client.getName(), textFile.getName());
-        } catch (FileNotFoundException exception) {
-            log.error("Файл {} для записи данных не найден!Error: {}", textFile, exception.getMessage());
-        } catch (IOException exception) {
-            log.error(exception.getMessage(), exception);
-        }
-    }
-
-    //сериализация объектов в файл
-    public static void saveNewClientInObjectFile(List<Transaction> list) {
-        if (!transactionList.isEmpty()) {
-            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
-                objectOutputStream.writeObject(list);
-                log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
-            } catch (FileNotFoundException exception) {
-                log.error("Файл {} для записи данных не найден!Error: {}", objectFile, exception.getMessage());
-            } catch (IOException exception) {
-                log.error(exception.getMessage(), exception);
-            }
-        } else {
-            System.out.println("Вы не добавляли новых клиентов");
-        }
-    }
-
-
-    //Просмотреть всех клиентов
-    public static void showAllClients() {
-        System.out.println("Вы выбрали функцию Просмотр всех клиентов");
-        System.out.println("Ниже указаны все клиенты в базе данных:");
-        if (!transactionList.isEmpty()) {
-            transactionList.stream().forEach(System.out::println);
-        } else {
-            System.out.println("Список клиентов пуст");
-        }
-    }
-
-    //десериализация объектов в список
-    public static List<Transaction> readObjectFile(File file) {
-        List<Transaction> transactionReadList = new ArrayList<>();
-        if (file.exists()) {
-            try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
-                transactionReadList = (ArrayList<Transaction>) objectInputStream.readObject();
-            } catch (FileNotFoundException exception) {
-                log.error("Файл {} для записи данных не найден!Error: {}", file.getName(), exception.getMessage());
-            } catch (IOException exception) {
-                log.error(exception.getMessage(), exception);
-            } catch (ClassNotFoundException exception) {
-                log.error(exception.getMessage(), exception);
-            }
-            return transactionReadList;
-        } else {
-            return transactionReadList;
-        }
-    }
-
-    //проверка на наличие клиента в базе даннах
-    public static boolean isTransactionAvailability(Transaction transaction) {
-        return transactionList.stream().anyMatch(transactionObject -> transactionObject.equals(transaction));
-    }
-
-    //выход из приложения серилизируя лист если были добавлены новые клиенты
-    public static void exitFromApp() {
-        if (transactionAdded) {
-            saveNewClientInObjectFile(transactionList);
-            log.info("Лист с новыми клиентами был сериалезирован");
-        }
-    }
-    public boolean isClientAvailability
+//    public static void saveNewClientInTextFile(Transaction transaction) {
+//        try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
+//            br.write(client.getName() + "," + client.getContactDate() + "," + client.getClientTyp());
+//            br.newLine();
+//            log.info("Клиент {} успешно сохранен в текстовый файл {}", client.getName(), textFile.getName());
+//        } catch (FileNotFoundException exception) {
+//            log.error("Файл {} для записи данных не найден!Error: {}", textFile, exception.getMessage());
+//        } catch (IOException exception) {
+//            log.error(exception.getMessage(), exception);
+//        }
 }
+
+//сериализация объектов в файл
+//public static void saveNewClientInObjectFile(List<Transaction> list) {
+//    if (!transactionList.isEmpty()) {
+//        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
+//            objectOutputStream.writeObject(list);
+//            log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
+//        } catch (FileNotFoundException exception) {
+//            log.error("Файл {} для записи данных не найден!Error: {}", objectFile, exception.getMessage());
+//        } catch (IOException exception) {
+//            log.error(exception.getMessage(), exception);
+//        }
+//    } else {
+//        System.out.println("Вы не добавляли новых клиентов");
+//    }
+//}
+
+
+////Просмотреть всех клиентов
+//public static void showAllClients() {
+//    System.out.println("Вы выбрали функцию Просмотр всех клиентов");
+//    System.out.println("Ниже указаны все клиенты в базе данных:");
+//    if (!transactionList.isEmpty()) {
+//        transactionList.stream().forEach(System.out::println);
+////    } else {
+////        System.out.println("Список клиентов пуст");
+////    }
+////}
+//
+////десериализация объектов в список
+//public static List<Transaction> readObjectFile(File file) {
+//    List<Transaction> transactionReadList = new ArrayList<>();
+//    if (file.exists()) {
+//        try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
+//            transactionReadList = (ArrayList<Transaction>) objectInputStream.readObject();
+//        } catch (FileNotFoundException exception) {
+//            log.error("Файл {} для записи данных не найден!Error: {}", file.getName(), exception.getMessage());
+//        } catch (IOException exception) {
+//            log.error(exception.getMessage(), exception);
+//        } catch (ClassNotFoundException exception) {
+//            log.error(exception.getMessage(), exception);
+//        }
+//        return transactionReadList;
+//    } else {
+//        return transactionReadList;
+//    }
+//}
+//
+////проверка на наличие клиента в базе даннах
+//public static boolean isTransactionAvailability(Transaction transaction) {
+//    return transactionList.stream().anyMatch(transactionObject -> transactionObject.equals(transaction));
+//}
+//
+////выход из приложения серилизируя лист если были добавлены новые клиенты
+//public static void exitFromApp() {
+//    if (transactionAdded) {
+//        saveNewClientInObjectFile(transactionList);
+//        log.info("Лист с новыми клиентами был сериалезирован");
+//    }
+//}
+//
+//public boolean isClientAvailability
+//}

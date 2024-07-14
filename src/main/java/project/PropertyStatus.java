@@ -3,14 +3,14 @@ package project;
 public enum PropertyStatus {
     AVAILABLE, RESERVED, SOLD, NONE;
 
+    //преобразуем String в Enum
     public static PropertyStatus fromStringPropertyStatus(String typ) {
         if (typ != null) {
-            String propertyStatus = typ.trim();
-            if (propertyStatus.equalsIgnoreCase(AVAILABLE.toString())) {
+            if (typ.equalsIgnoreCase(AVAILABLE.toString())) {
                 return AVAILABLE;
-            } else if (propertyStatus.equalsIgnoreCase(RESERVED.toString())) {
+            } else if (typ.equalsIgnoreCase(RESERVED.toString())) {
                 return RESERVED;
-            } else if (propertyStatus.equalsIgnoreCase(SOLD.toString())) {
+            } else if (typ.equalsIgnoreCase(SOLD.toString())) {
                 return SOLD;
             } else
                 return NONE;

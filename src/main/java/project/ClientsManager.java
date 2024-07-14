@@ -12,16 +12,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 @Slf4j
 public class ClientsManager {
     private static final File textFile = Path.of("src", "main", "resources", "clients_base.txt").toFile();
     private static final File objectFile = Path.of("src", "main", "resources", "clients_base.ser").toFile();
     private static Scanner scanner = new Scanner(System.in);
-    private static List<Client> clientsList = new ArrayList<>(readObjectFile(objectFile));
+    private static Set<Client> clientsList = new HashSet<>(readObjectFile(objectFile));
     private static boolean clientAdded = false; //флаг для сериализации листа если добавлены новые клиенты
 
     //метод добавления клиентов в базу данных
@@ -49,8 +49,8 @@ public class ClientsManager {
             clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine());
         }
         Client client = new Client(name, contactDate, clientTyp);
-        if (!isClientAvailability(client)) {
-            clientAdded = clientsList.add(client);
+        clientAdded = clientsList.add(client);
+        if (clientAdded) {
             log.info("Клиент {} успешно добавлен в список.", client.getName());
             saveNewClientInTextFile(client);
         } else {
@@ -60,7 +60,8 @@ public class ClientsManager {
     }
 
     // Сохранение клиентов в текстовый файл
-    public static void saveNewClientInTextFile(Client client) {
+    private static void saveNewClientInTextFile(Client client) {
+        // проверка на наличие файла
         try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
             br.write(client.getName() + "," + client.getContactDate() + "," + client.getClientTyp());
             br.newLine();
@@ -73,7 +74,7 @@ public class ClientsManager {
     }
 
     //сериализация объектов в файл
-    public static void saveNewClientInObjectFile(List<Client> list) {
+    private static void saveNewClientInObjectFile(Set<Client> list) {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
             objectOutputStream.writeObject(list);
             log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
@@ -103,11 +104,12 @@ public class ClientsManager {
     }
 
     //десериализация объектов в список
-    public static List<Client> readObjectFile(File file) {
-        List<Client> clientReadList = new ArrayList<>();
+    private static Set<Client> readObjectFile(File file) {
+        //проверка на соответствие файла
+        Set<Client> clientReadList = new HashSet<>();
         if (file.exists()) {
             try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
-                clientReadList = (ArrayList<Client>) objectInputStream.readObject();
+                clientReadList = (HashSet<Client>) objectInputStream.readObject();
             } catch (FileNotFoundException exception) {
                 log.error("Файл {} для записи данных не найден!Error: {}", file.getName(), exception.getMessage());
             } catch (IOException exception) {
@@ -121,13 +123,13 @@ public class ClientsManager {
         }
     }
 
-    //проверка на наличие клиента в базе даннах
-    public static boolean isClientAvailability(Client client) {
-        return clientsList.stream().anyMatch(clientObject -> clientObject.getContactDate().equalsIgnoreCase(client.getContactDate()));
-    }
+//    //проверка на наличие клиента в базе даннах
+//    private static boolean isClientAvailability(Client client) {
+//        return clientsList.stream().anyMatch(clientObject -> clientObject.getContactDate().equalsIgnoreCase(client.getContactDate()));
+//    }
 
-    public static List<Client> getClientsList() {
-        return new ArrayList<>(clientsList);
+    public static Set<Client> getClientsList() {
+        return new HashSet<>(clientsList);
     }
 }
 

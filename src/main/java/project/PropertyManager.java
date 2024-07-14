@@ -27,21 +27,28 @@ public class PropertyManager {
     // Добавить объект недвижимости
     public static void addNewProperty() {
         System.out.println("Вы выбрали функцию Добавить объект недвижимости в базу данных!");
+        System.out.println("Введите id недвижимости: ");
+        String id = scanner.nextLine();
+        while (id.equalsIgnoreCase("") || id.equalsIgnoreCase(" ")) {
+            System.out.println("Вы не ввели id недвижимости");
+            System.out.println("Введите id недвижимости: ");
+            id = scanner.nextLine().trim();
+        }
         System.out.println("Введите адрес недвижимости: ");
         System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
         String address = scanner.nextLine().trim();
-        while (address.equalsIgnoreCase("")) {
+        while (address.equalsIgnoreCase("") || address.equalsIgnoreCase(" ")) {
             System.out.println("Вы не ввели адрес!");
             System.out.println("Введите адрес недвижимости: ");
             System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
-            address = scanner.nextLine();
+            address = scanner.nextLine().trim();
         }
         System.out.println("Введите тип недвижимости: (APARTMENT,HOUSE,COMMERCIAL).");
-        PropertyTyp propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine());
+        PropertyTyp propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
         while (propertyTyp == PropertyTyp.NONE || propertyTyp == null) {
             System.out.println("Вы указали неправильное значение Тип Недвижимости!");
             System.out.println("Введите тип недвижимости как указано в скобках (APARTMENT,HOUSE,COMMERCIAL).");
-            propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine());
+            propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
         }
         System.out.println("Введите цену недвижимости в $: ");
         while (!scanner.hasNextDouble()) {
@@ -58,13 +65,13 @@ public class PropertyManager {
         }
         double size = scanner.nextDouble();
         System.out.println("Введите статус недвижимости (AVAILABLE, RESERVED, SOLD)");
-        PropertyStatus propertyStatus = PropertyStatus.fromStringPropertyStatus(scanner.next());
+        PropertyStatus propertyStatus = PropertyStatus.fromStringPropertyStatus(scanner.next().trim());
         while (propertyStatus == PropertyStatus.NONE || propertyStatus == null) {
             System.out.println("Вы указали неправильное значение Статус Недвижимости!");
             System.out.println("Введите статус недвижимости как указано в скобках (AVAILABLE, RESERVED, SOLD).");
             propertyStatus = PropertyStatus.fromStringPropertyStatus(scanner.next());
         }
-        Property property = new Property(address, propertyTyp, price, size, propertyStatus);
+        Property property = new Property(id, address, propertyTyp, price, size, propertyStatus);
         if (!isPropertyAvailability(property)) {
             propertyAdded = propertyList.add(property);
             log.info("Недвижимость по адресу {} успешно добавлена в список.", property.getAddress());

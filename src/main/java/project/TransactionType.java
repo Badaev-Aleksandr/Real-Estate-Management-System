@@ -3,14 +3,14 @@ package project;
 public enum TransactionType {
     PURCHASE, SALE, RENT, NONE;
 
+    //преобразуем String в Enum
     public static TransactionType fromStringTransactionTyp(String typ) {
         if (typ != null) {
-            String cleanTyp = typ.trim();
-            if (cleanTyp.equalsIgnoreCase(PURCHASE.toString())) {
+            if (typ.equalsIgnoreCase(PURCHASE.toString())) {
                 return PURCHASE;
-            } else if (cleanTyp.equalsIgnoreCase(SALE.toString())) {
+            } else if (typ.equalsIgnoreCase(SALE.toString())) {
                 return SALE;
-            } else if (cleanTyp.equalsIgnoreCase(RENT.toString())) {
+            } else if (typ.equalsIgnoreCase(RENT.toString())) {
                 return RENT;
             } else
                 return NONE;
