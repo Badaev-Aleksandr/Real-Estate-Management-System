@@ -1,6 +1,7 @@
 package project;
 
 import lombok.extern.slf4j.Slf4j;
+
 import java.util.Scanner;
 
 
@@ -47,6 +48,8 @@ public class Main {
                     ClientsManager.addNewClient();
                     break;
                 case 3:
+                    TransactionManager.addNewTransaction();
+                    break;
                 case 4:
                     PropertyManager.showAllProperty();
                     break;

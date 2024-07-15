@@ -44,7 +44,7 @@ public class PropertyManager {
             System.out.println("Введите тип недвижимости как указано в скобках (APARTMENT,HOUSE,COMMERCIAL).");
             propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
         }
-        System.out.println("Введите цену недвижимости в $: ");
+        System.out.println("Введите цену недвижимости в $ пример: (99,99)");
         while (!scanner.hasNextDouble()) {
             System.out.println("Введено неверное значение цены!");
             System.out.println("Введите цену цифрами пример: (99,99)");
@@ -54,7 +54,7 @@ public class PropertyManager {
         System.out.println("Введите размер (кв. метры): ");
         while (!scanner.hasNextDouble()) {
             System.out.println("Введено неверное значение цены!");
-            System.out.println("Введите цену цифрами пример: (99.99)");
+            System.out.println("Введите цену цифрами пример: (99,99)");
             scanner.next();
         }
         double size = scanner.nextDouble();
