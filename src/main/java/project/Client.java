@@ -10,15 +10,21 @@ import java.util.Set;
 @Getter
 public class Client implements Serializable {
     private static final long serialVersionUID = 1L;
-    private Set<Transaction> transactions = new HashSet<>();
+    private static Set<Transaction> transactionsClientList = new HashSet<>();
+    private final int id; // каждый созданный объект будет получать id номер рандом
     private String name; // Имя клиента
     private String contactDate; // контактные данные
     private ClientTyp clientTyp; // тип клиента (покупатель, продавец, арендатор).
 
-    public Client(String name, String contactDate, ClientTyp clientTyp) {
+    public Client(int id, String name, String contactDate, ClientTyp clientTyp) {
+        this.id = id;
         this.name = name;
         this.contactDate = contactDate;
         this.clientTyp = clientTyp;
+    }
+
+    public static void addTransactionToList(Transaction transaction) {
+        transactionsClientList.add(transaction);
     }
 
     public void setName(String name) {

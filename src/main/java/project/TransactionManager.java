@@ -13,22 +13,27 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 @Slf4j
 public class TransactionManager {
     private static final File textFile = Path.of("src", "main", "resources", "transaction_base.txt").toFile();
     private static final File objectFile = Path.of("src", "main", "resources", "transaction_base.ser").toFile();
     private static Scanner scanner = new Scanner(System.in);
-    //private static List<Transaction> transactionList = new ArrayList<>(readObjectFile(objectFile));
+  //  private static Set<Transaction> transactionList = new HashSet<>(readObjectFile(objectFile));
     private static boolean transactionAdded = false; // флаг для сериализации клиентов если были добавлены новые
 
     //метод добавления сделки в базу данных
     public static void addNewTransaction() {
         System.out.println("Вы выбрали функцию Зарегистрировать сделку.");
-        System.out.println("Введите адрес недвижимости: ");
-        System.out.println("Пример: (Индекс,Город,Улица,дом,кв)");
+        System.out.println("Введите id недвижимости: ");
+        int id = scanner.nextInt();
+        while (!scanner.hasNextInt()){
+
+        }
         String address = scanner.nextLine();
         System.out.println("Введите контактные данные клиента: ");
         String contactDate = scanner.nextLine();

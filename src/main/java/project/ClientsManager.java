@@ -27,34 +27,36 @@ public class ClientsManager {
     //метод добавления клиентов в базу данных
     public static void addNewClient() {
         System.out.println("Вы выбрали функцию Добавить клиента.");
+        int id = randomId();
         System.out.println("Введите имя клиента: ");
         String name = scanner.nextLine().trim();
         while (name.equalsIgnoreCase("")) {
             System.out.println("Вы не ввели имя!");
             System.out.println("Введите имя клиента: ");
-            name = scanner.nextLine();
+            name = scanner.nextLine().trim();
         }
         System.out.println("Введите контактные данные клиента: ");
         String contactDate = scanner.nextLine().trim();
         while (contactDate.equalsIgnoreCase("")) {
             System.out.println("Вы не ввели контактные данные!");
             System.out.println("Введите контактные данные клиента: ");
-            contactDate = scanner.nextLine();
+            contactDate = scanner.nextLine().trim();
         }
         System.out.println("Введите тип клиента: (BAYER,SELLER,TENANT).");
-        ClientTyp clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine());
+        ClientTyp clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine().trim());
         while (clientTyp == ClientTyp.NONE || clientTyp == null) {
             System.out.println("Вы указали неправильное значение Тип Клиента!");
             System.out.println("Введите тип клиента как указано в скобках (BAYER,SELLER,TENANT).");
-            clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine());
+            clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine().trim());
         }
-        Client client = new Client(name, contactDate, clientTyp);
+        Client client = new Client(id, name, contactDate, clientTyp);
         clientAdded = clientsList.add(client);
         if (clientAdded) {
-            log.info("Клиент {} успешно добавлен в список.", client.getName());
+            System.out.println("Клиенту присвоен id: " + id);
+            log.info("Клиент {} успешно добавлен в список с id{}.", client.getName(), id);
             saveNewClientInTextFile(client);
         } else {
-            System.out.println("Не добавлен! В базе данных есть такой клиент: " + client.getName() + " с контактными данными: " + client.getContactDate());
+            System.out.println("Не добавлен! В базе данных уже существует клиент с контактными данными: " + client.getContactDate());
             log.info("Клиент {} не добавлен!", client.getName());
         }
     }
@@ -123,10 +125,19 @@ public class ClientsManager {
         }
     }
 
-//    //проверка на наличие клиента в базе даннах
+    //    //проверка на наличие клиента в базе даннах
 //    private static boolean isClientAvailability(Client client) {
 //        return clientsList.stream().anyMatch(clientObject -> clientObject.getContactDate().equalsIgnoreCase(client.getContactDate()));
 //    }
+
+    //генерирование рандом id для объекта
+    public static int randomId() {
+        int id = (int) (Math.random() * 90000000) + 10000000;
+        if (clientsList.stream().anyMatch(client -> client.getId() == id)) {
+            randomId();
+        }
+        return id;
+    }
 
     public static Set<Client> getClientsList() {
         return new HashSet<>(clientsList);

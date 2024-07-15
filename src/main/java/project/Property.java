@@ -3,19 +3,19 @@ package project;
 import lombok.Getter;
 
 import java.io.Serializable;
-
+import java.util.Objects;
 
 @Getter
 public class Property implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String id; // айди недвижимости
+    private final int id; // айди недвижимости будет присвоен рандомно каждому объекту
     private String address; // адрес недвижимости
     private PropertyTyp propertyTyp; // тип недвижимости Enum
     private double price; //цена недвижимости
     private double size; // размер (кв. метры)
     private PropertyStatus statusOfProperty; // статус недвижимости
 
-    public Property(String id, String address, PropertyTyp propertyTyp, double price, double size,
+    public Property(int id, String address, PropertyTyp propertyTyp, double price, double size,
                     PropertyStatus statusOfProperty) {
         this.id = id;
         this.address = address;
@@ -46,9 +46,24 @@ public class Property implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Property property = (Property) o;
+        return Double.compare(price, property.price) == 0 && Double.compare(size, property.size) == 0 &&
+                Objects.equals(address, property.address) && propertyTyp == property.propertyTyp &&
+                statusOfProperty == property.statusOfProperty;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(address, propertyTyp, price, size, statusOfProperty);
+    }
+
+    @Override
     public String toString() {
         return "Property{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", address='" + address + '\'' +
                 ", propertyTyp=" + propertyTyp +
                 ", price=" + price +

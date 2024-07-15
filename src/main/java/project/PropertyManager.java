@@ -12,32 +12,26 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 @Slf4j
 public class PropertyManager {
     private static final File textFile = Path.of("src", "main", "resources", "property_base.txt").toFile();
     private static final File objectFile = Path.of("src", "main", "resources", "property_base.ser").toFile();
     private static Scanner scanner = new Scanner(System.in);
-    private static List<Property> propertyList = new ArrayList<>(readObjectFile(objectFile));
+    private static Set<Property> propertyList = new HashSet<>(readObjectFile(objectFile));
     private static boolean propertyAdded = false; //флаг для сериализации листа если добавлена новая недвижимость
 
     // Добавить объект недвижимости
     public static void addNewProperty() {
         System.out.println("Вы выбрали функцию Добавить объект недвижимости в базу данных!");
-        System.out.println("Введите id недвижимости: ");
-        String id = scanner.nextLine();
-        while (id.equalsIgnoreCase("") || id.equalsIgnoreCase(" ")) {
-            System.out.println("Вы не ввели id недвижимости");
-            System.out.println("Введите id недвижимости: ");
-            id = scanner.nextLine().trim();
-        }
+        int id = randomId(); // генерация рандом id
         System.out.println("Введите адрес недвижимости: ");
         System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
         String address = scanner.nextLine().trim();
-        while (address.equalsIgnoreCase("") || address.equalsIgnoreCase(" ")) {
+        while (address.equalsIgnoreCase("") ) {
             System.out.println("Вы не ввели адрес!");
             System.out.println("Введите адрес недвижимости: ");
             System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
@@ -72,9 +66,10 @@ public class PropertyManager {
             propertyStatus = PropertyStatus.fromStringPropertyStatus(scanner.next());
         }
         Property property = new Property(id, address, propertyTyp, price, size, propertyStatus);
-        if (!isPropertyAvailability(property)) {
-            propertyAdded = propertyList.add(property);
-            log.info("Недвижимость по адресу {} успешно добавлена в список.", property.getAddress());
+        propertyAdded = propertyList.add(property);
+        if (propertyAdded) {
+            System.out.println("Недвижимости присвоен id: " + id);
+            log.info("Недвижимость по адресу {} успешно добавлена в список. Присвоен id: {}", property.getAddress(), id);
             saveNewPropertyInTextFile(property);
         } else {
             System.out.println("Не добавлена! В базе данных есть такая недвижимость. " + property);
@@ -83,7 +78,7 @@ public class PropertyManager {
     }
 
     // Сохранение клиентов в текстовый файл
-    public static void saveNewPropertyInTextFile(Property property) {
+    private static void saveNewPropertyInTextFile(Property property) {
         try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
             br.write(property.getAddress() + "," + property.getPropertyTyp() + "," + property.getPrice() + "," +
                     property.getSize() + "," + property.getStatusOfProperty());
@@ -97,7 +92,7 @@ public class PropertyManager {
     }
 
     //сериализация объектов в файл
-    public static void saveNewPropertyInObjectFile(List<Property> list) {
+    private static void saveNewPropertyInObjectFile(Set<Property> list) {
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
             objectOutputStream.writeObject(list);
             log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
@@ -126,11 +121,11 @@ public class PropertyManager {
     }
 
     //десериализация объектов в список
-    public static List<Property> readObjectFile(File file) {
-        List<Property> propertyReadList = new ArrayList<>();
+    private static Set<Property> readObjectFile(File file) {
+        Set<Property> propertyReadList = new HashSet<>();
         if (file.exists()) {
             try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
-                propertyReadList = (ArrayList<Property>) objectInputStream.readObject();
+                propertyReadList = (HashSet<Property>) objectInputStream.readObject();
             } catch (FileNotFoundException exception) {
                 log.error("Файл {} для записи данных не найден!Error: {}", file.getName(), exception.getMessage());
             } catch (IOException exception) {
@@ -144,8 +139,17 @@ public class PropertyManager {
         }
     }
 
-    //проверка на наличие клиента в базе даннах
-    public static boolean isPropertyAvailability(Property property) {
-        return propertyList.stream().anyMatch(propertyObject -> propertyObject.equals(property));
+    //генерирование рандом id для объекта
+    public static int randomId() {
+        int id = (int) (Math.random() * 90000000) + 10000000;
+        if (propertyList.stream().anyMatch(property -> property.getId() == id)) {
+            randomId();
+        }
+        return id;
+    }
+
+
+    public static Set<Property> getPropertyList() {
+        return new HashSet<>(propertyList);
     }
 }
