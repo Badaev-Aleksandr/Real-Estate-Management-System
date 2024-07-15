@@ -34,12 +34,12 @@ public class Transaction implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return id == that.id;
+        return Double.compare(transactionAmount, that.transactionAmount) == 0 && Objects.equals(property, that.property) && Objects.equals(client, that.client) && Objects.equals(localDate, that.localDate) && transactionType == that.transactionType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(property, client, localDate, transactionType, transactionAmount);
     }
 
     @Override
