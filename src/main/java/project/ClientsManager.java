@@ -42,11 +42,11 @@ public class ClientsManager {
             System.out.println("Введите контактные данные клиента: ");
             contactDate = scanner.nextLine().trim();
         }
-        System.out.println("Введите тип клиента: (BAYER,SELLER,TENANT).");
+        System.out.println("Введите тип клиента: (BAYER, SELLER, TENANT).");
         ClientTyp clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine().trim());
         while (clientTyp == ClientTyp.NONE || clientTyp == null) {
             System.out.println("Вы указали неправильное значение Тип Клиента!");
-            System.out.println("Введите тип клиента как указано в скобках (BAYER,SELLER,TENANT).");
+            System.out.println("Введите тип клиента как указано в скобках (BAYER, SELLER, TENANT).");
             clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine().trim());
         }
         Client client = new Client(id, name, contactDate, clientTyp);
@@ -65,11 +65,11 @@ public class ClientsManager {
     private static void saveNewClientInTextFile(Client client) {
         // проверка на наличие файла
         try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
-            br.write(client.getName() + "," + client.getContactDate() + "," + client.getClientTyp());
+            br.write(client.getId() + "," + client.getName() + "," + client.getContactDate() + "," + client.getClientTyp());
             br.newLine();
-            log.info("Клиент {} успешно сохранен в текстовый файл {}", client.getName(), textFile.getName());
+            log.info("Клиент {} с id: {} успешно сохранен в текстовый файл {}", client.getName(), client.getId(), textFile.getName());
         } catch (FileNotFoundException exception) {
-            log.error("Файл {} для записи данных не найден!Error: {}", textFile, exception.getMessage());
+            log.error("Файл {} для записи данных не найден! Error: {}", textFile, exception.getMessage());
         } catch (IOException exception) {
             log.error(exception.getMessage(), exception);
         }

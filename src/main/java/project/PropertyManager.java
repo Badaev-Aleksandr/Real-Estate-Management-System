@@ -31,17 +31,17 @@ public class PropertyManager {
         System.out.println("Введите адрес недвижимости: ");
         System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
         String address = scanner.nextLine().trim();
-        while (address.equalsIgnoreCase("") ) {
+        while (address.equalsIgnoreCase("")) {
             System.out.println("Вы не ввели адрес!");
             System.out.println("Введите адрес недвижимости: ");
             System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
             address = scanner.nextLine().trim();
         }
-        System.out.println("Введите тип недвижимости: (APARTMENT,HOUSE,COMMERCIAL).");
+        System.out.println("Введите тип недвижимости: (APARTMENT, HOUSE, COMMERCIAL).");
         PropertyTyp propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
         while (propertyTyp == PropertyTyp.NONE || propertyTyp == null) {
             System.out.println("Вы указали неправильное значение Тип Недвижимости!");
-            System.out.println("Введите тип недвижимости как указано в скобках (APARTMENT,HOUSE,COMMERCIAL).");
+            System.out.println("Введите тип недвижимости как указано в скобках (APARTMENT, HOUSE, COMMERCIAL).");
             propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
         }
         System.out.println("Введите цену недвижимости в $ пример: (99,99)");
@@ -80,7 +80,7 @@ public class PropertyManager {
     // Сохранение клиентов в текстовый файл
     private static void saveNewPropertyInTextFile(Property property) {
         try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
-            br.write(property.getAddress() + "," + property.getPropertyTyp() + "," + property.getPrice() + "," +
+            br.write(property.getId() + "," + property.getAddress() + "," + property.getPropertyTyp() + "," + property.getPrice() + "," +
                     property.getSize() + "," + property.getStatusOfProperty());
             br.newLine();
             log.info("Недвижимость {} успешно сохранена в текстовый файл {}", property.getAddress(), textFile.getName());
