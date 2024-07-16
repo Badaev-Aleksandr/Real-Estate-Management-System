@@ -15,10 +15,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -101,12 +98,15 @@ public class TransactionManager {
         if (transactionAdded) {
             System.out.println("Транзакции присвоен id: " + transactionId);
             Client.addTransactionToList(transaction);
+            saveNewTransactionInTextFile(transaction);
             log.info("Транзакция с id: {} добавлена в список.", transactionId);
+        } else {
+            System.out.println("Данная транзакция уже есть в списке!");
         }
     }
 
     // Сохранение сделки в текстовый файл
-    public static void saveNewTransactionInTextFile(Transaction transaction) {
+    private static void saveNewTransactionInTextFile(Transaction transaction) {
         try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
             br.write(transaction.getId() + "," + transaction.getProperty().getId() + "," + transaction.getClient().getId()
                     + "," + transaction.getLocalDate() + "," + transaction.getTransactionType() + "," + transaction.getTransactionAmount());
@@ -120,39 +120,39 @@ public class TransactionManager {
     }
 
     //сериализация объектов в файл
-//    public static void saveNewClientInObjectFile(List<Transaction> list) {
-//        if (!transactionList.isEmpty()) {
-//            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
-//                objectOutputStream.writeObject(list);
-//                log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
-//            } catch (FileNotFoundException exception) {
-//                log.error("Файл {} для записи данных не найден!Error: {}", objectFile, exception.getMessage());
-//            } catch (IOException exception) {
-//                log.error(exception.getMessage(), exception);
-//            }
-//        } else {
-//            System.out.println("Вы не добавляли новых клиентов");
-//        }
-//    }
+    private static void saveNewTransactionInObjectFile(Set<Transaction> list) {
+        if (!transactionList.isEmpty()) {
+            try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
+                objectOutputStream.writeObject(list);
+                log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
+            } catch (FileNotFoundException exception) {
+                log.error("Файл {} для записи данных не найден!Error: {}", objectFile, exception.getMessage());
+            } catch (IOException exception) {
+                log.error(exception.getMessage(), exception);
+            }
+        } else {
+            System.out.println("Вы не добавляли транзакции");
+        }
+    }
 
 
-    //Просмотреть всех клиентов
-//    public static void showAllClients() {
-//        System.out.println("Вы выбрали функцию Просмотр всех клиентов");
-//        System.out.println("Ниже указаны все клиенты в базе данных:");
-//        if (!transactionList.isEmpty()) {
-//            transactionList.stream().forEach(System.out::println);
-//        } else {
-//            System.out.println("Список клиентов пуст");
-//        }
-//    }
+    //Просмотреть всех транзакций
+    public static void showAllTransaction() {
+        System.out.println("Вы выбрали функцию Просмотр всех Транзакций");
+        System.out.println("Ниже указаны все транзакции в базе данных:");
+        if (!transactionList.isEmpty()) {
+            transactionList.forEach(System.out::println);
+        } else {
+            System.out.println("Список транзакций пуст");
+        }
+    }
 
     //десериализация объектов в список
-    public static List<Transaction> readObjectFile(File file) {
-        List<Transaction> transactionReadList = new ArrayList<>();
+    private static Set<Transaction> readObjectFile(File file) {
+        Set<Transaction> transactionReadList = new HashSet<>();
         if (file.exists()) {
             try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
-                transactionReadList = (ArrayList<Transaction>) objectInputStream.readObject();
+                transactionReadList = (HashSet<Transaction>) objectInputStream.readObject();
             } catch (FileNotFoundException exception) {
                 log.error("Файл {} для записи данных не найден!Error: {}", file.getName(), exception.getMessage());
             } catch (IOException exception) {
@@ -166,18 +166,18 @@ public class TransactionManager {
         }
     }
 
-    //проверка на наличие клиента в базе даннах
+    //проверка на наличие транзакции в базе даннах
 //    public static boolean isTransactionAvailability(Transaction transaction) {
 //        return transactionList.stream().anyMatch(transactionObject -> transactionObject.equals(transaction));
 //    }
 
     //выход из приложения серилизируя лист если были добавлены новые клиенты
-//    public static void exitFromApp() {
-//        if (transactionAdded) {
-//            saveNewClientInObjectFile(transactionList);
-//            log.info("Лист с новыми клиентами был сериалезирован");
-//        }
-//    }
+    public static void exitFromApp() {
+        if (transactionAdded) {
+            saveNewTransactionInObjectFile(transactionList);
+            log.info("Лист с новыми транзакциями был сериалезирован");
+        }
+    }
 
     //генерирование рандом id для объекта
     private static int randomId() {

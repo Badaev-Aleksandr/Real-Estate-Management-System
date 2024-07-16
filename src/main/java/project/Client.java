@@ -23,8 +23,17 @@ public class Client implements Serializable {
         this.clientTyp = clientTyp;
     }
 
+    //метод добавления Транзакций Клиента в лист
     public static void addTransactionToList(Transaction transaction) {
         transactionsClientList.add(transaction);
+    }
+
+    //вывод на экран всех транзакций клиента
+    public static void showAllClientTransaction() {
+        if (transactionsClientList.isEmpty()) {
+            System.out.println("пустой");
+        }
+        transactionsClientList.forEach(System.out::println);
     }
 
     public void setName(String name) {
@@ -55,7 +64,8 @@ public class Client implements Serializable {
     @Override
     public String toString() {
         return "Client{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", contactDate='" + contactDate + '\'' +
                 ", clientTyp=" + clientTyp +
                 '}';

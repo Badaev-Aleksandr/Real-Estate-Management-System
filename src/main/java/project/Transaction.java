@@ -45,7 +45,8 @@ public class Transaction implements Serializable {
     @Override
     public String toString() {
         return "Transaction{" +
-                "property=" + property +
+                "id=" + id +
+                ", property=" + property +
                 ", client=" + client +
                 ", localDate=" + localDate +
                 ", transactionType=" + transactionType +

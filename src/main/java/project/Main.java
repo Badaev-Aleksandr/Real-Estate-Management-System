@@ -55,11 +55,15 @@ public class Main {
                     break;
                 case 5:
                     ClientsManager.showAllClients();
+                    Client.showAllClientTransaction();
                     break;
                 case 6:
+                    TransactionManager.showAllTransaction();
+                    break;
                 case 7:
                     PropertyManager.exitFromApp();
                     ClientsManager.exitFromApp();
+                    TransactionManager.exitFromApp();
                     System.out.println("До новых встреч");
                     break;
                 default:
