@@ -10,11 +10,11 @@ import java.util.Set;
 @Getter
 public class Client implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static Set<Transaction> transactionsClientList = new HashSet<>();
     private final int id; // каждый созданный объект будет получать id номер рандом
     private String name; // Имя клиента
     private String contactDate; // контактные данные
     private ClientTyp clientTyp; // тип клиента (покупатель, продавец, арендатор).
+    private static Set<Transaction> transactionsClientList = new HashSet<>();
 
     public Client(int id, String name, String contactDate, ClientTyp clientTyp) {
         this.id = id;
@@ -24,14 +24,16 @@ public class Client implements Serializable {
     }
 
     //метод добавления Транзакций Клиента в лист
-    public static void addTransactionToList(Transaction transaction) {
-        transactionsClientList.add(transaction);
+    public void addTransactionToClientList(Transaction transaction) {
+        boolean result = transactionsClientList.add(transaction);
+        if (result)
+            System.out.println("Добавил");
     }
 
     //вывод на экран всех транзакций клиента
-    public static void showAllClientTransaction() {
+    public void showAllClientTransaction() {
         if (transactionsClientList.isEmpty()) {
-            System.out.println("пустой");
+            System.out.println("Транзакций нет");
         }
         transactionsClientList.forEach(System.out::println);
     }
@@ -46,6 +48,10 @@ public class Client implements Serializable {
 
     public void setClientTyp(ClientTyp clientTyp) {
         this.clientTyp = clientTyp;
+    }
+
+    public static Set<Transaction> getTransactionsClientList() {
+        return new HashSet<>(transactionsClientList);
     }
 
     @Override

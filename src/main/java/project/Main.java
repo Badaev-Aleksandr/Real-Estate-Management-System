@@ -55,7 +55,7 @@ public class Main {
                     break;
                 case 5:
                     ClientsManager.showAllClients();
-                    Client.showAllClientTransaction();
+                    ClientsManager.showAllTransactionsClient();
                     break;
                 case 6:
                     TransactionManager.showAllTransaction();

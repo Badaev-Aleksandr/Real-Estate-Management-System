@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -129,12 +130,30 @@ public class ClientsManager {
 //    private static boolean isClientAvailability(Client client) {
 //        return clientsList.stream().anyMatch(clientObject -> clientObject.getContactDate().equalsIgnoreCase(client.getContactDate()));
 //    }
+    //добавление транзакций клиенту
+    public static void addTransaction(int clientId, Transaction transaction) {
+        Optional<Client> foundClient = clientsList.stream().filter(client -> client.getId() == clientId).findFirst();
+        foundClient.ifPresentOrElse(client -> {
+                    client.addTransactionToClientList(transaction);
+                    System.out.println("Транзакция добавлена клиенту " + client.getName() + " с id: " + client.getId());
+                },
+                () -> System.out.println("Клиент с id: " + clientId + " не найден!"));
+    }
+
+    //просмотр всех транзакций клиента
+    public static void showAllTransactionsClient() {
+        System.out.println("Введите id клиента для просмотра его транзакций: ");
+        int clientId = scanner.nextInt();
+        Optional<Client> foundClient = clientsList.stream().filter(client -> client.getId() == clientId).findFirst();
+        foundClient.ifPresentOrElse(Client::showAllClientTransaction,
+                () -> System.out.println("Клиента с id: " + clientId + " не найден!"));
+    }
 
     //генерирование рандом id для объекта
-    public static int randomId() {
+    private static int randomId() {
         int id = (int) (Math.random() * 90000000) + 10000000;
         if (clientsList.stream().anyMatch(client -> client.getId() == id)) {
-            randomId();
+            return randomId();
         }
         return id;
     }

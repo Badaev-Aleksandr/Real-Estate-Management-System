@@ -31,73 +31,17 @@ public class TransactionManager {
     public static void addNewTransaction() {
         System.out.println("Вы выбрали функцию Зарегистрировать сделку.");
         int transactionId = randomId();
-        int propertyId;
-        int clientId;
-        Property property;
-        Client client;
-        // добываем Недвижимость по id
-        do {
-            do {
-                System.out.println("Введите id недвижимости состоящее из 8 чисел: ");
-                while (!scanner.hasNextInt()) {
-                    System.out.println("Вы не ввели id!");
-                    System.out.println("Введите id недвижимости состоящее из 8 чисел: ");
-                    scanner.next();
-                }
-                propertyId = scanner.nextInt();
-                if (String.valueOf(propertyId).trim().length() != 8) {
-                    System.out.println("Вы ввели неправильное количество чисел");
-                }
-            } while (String.valueOf(propertyId).trim().length() != 8);
-            property = searchPropertyById(propertyId);
-        } while (property == null);
-        //добываем Клиента по id
-        do {
-            do {
-                System.out.println("Введите id клиента состоящее из 8 чисел: ");
-                while (!scanner.hasNextInt()) {
-                    System.out.println("Вы не ввели id!");
-                    System.out.println("Введите id клиента состоящее из 8 чисел: ");
-                    scanner.next();
-                }
-                clientId = scanner.nextInt();
-                if (String.valueOf(clientId).trim().length() != 8) {
-                    System.out.println("Вы ввели неправильное количество чисел");
-                }
-            } while (String.valueOf(clientId).trim().length() != 8);
-            client = searchClientById(clientId);
-        } while (client == null);
-        // получаем дату
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        LocalDate date = null;
-        do {
-            System.out.println("Введите дату сделки в формате: (dd.MM.yyyy).");
-            try {
-                String dateString = scanner.nextLine();
-                date = LocalDate.parse(dateString, formatter);
-            } catch (DateTimeParseException exception) {
-                log.error("Дата введена не правильно! Error: {}", exception.getMessage());
-            }
-        } while (date == null);
-        System.out.println("Введите тип сделки : (PURCHASE, SALE, RENT).");
-        TransactionType transactionType = TransactionType.fromStringTransactionTyp(scanner.nextLine().trim());
-        while (transactionType == TransactionType.NONE || transactionType == null) {
-            System.out.println("Вы указали неправильное значение Тип Недвижимости!");
-            System.out.println("Введите тип недвижимости как указано в скобках (APARTMENT, HOUSE, COMMERCIAL).");
-            transactionType = TransactionType.fromStringTransactionTyp(scanner.nextLine().trim());
-        }
-        System.out.println("Введите сумму сделки в $: ");
-        while (!scanner.hasNextDouble()) {
-            System.out.println("Введено неверное значение суммы сделки!");
-            System.out.println("Введите сумму цифрами пример: (99,99)");
-            scanner.next();
-        }
-        double transactionAmount = scanner.nextDouble();
-        Transaction transaction = new Transaction(transactionId, property, client, date, transactionType, transactionAmount);
+        Property property = getProperty();
+        Client client = getClient();
+        LocalDate date = getLocalDate();
+        TransactionType transactionType = getTransactionType();
+        double transactionAmount = getTransactionAmount();
+        Transaction
+                transaction = new Transaction(transactionId, property, client, date, transactionType, transactionAmount);
         transactionAdded = transactionList.add(transaction);
         if (transactionAdded) {
             System.out.println("Транзакции присвоен id: " + transactionId);
-            Client.addTransactionToList(transaction);
+            ClientsManager.addTransaction(client.getId(), transaction); // добавляем транзакцию клиенту
             saveNewTransactionInTextFile(transaction);
             log.info("Транзакция с id: {} добавлена в список.", transactionId);
         } else {
@@ -206,6 +150,88 @@ public class TransactionManager {
             System.out.println("Данной недвижимости с id:" + id + " нет в базе данных!");
             return null;
         } else return client;
+    }
+
+    //метод добывает Недвижимость по id
+    private static Property getProperty() {
+        int propertyId;
+        Property property;
+        do {
+            do {
+                System.out.println("Введите id недвижимости состоящее из 8 чисел: ");
+                while (!scanner.hasNextInt()) {
+                    System.out.println("Вы не ввели id!");
+                    System.out.println("Введите id недвижимости состоящее из 8 чисел: ");
+                    scanner.next();
+                }
+                propertyId = scanner.nextInt();
+                if (String.valueOf(propertyId).trim().length() != 8) {
+                    System.out.println("Вы ввели неправильное количество чисел");
+                }
+            } while (String.valueOf(propertyId).trim().length() != 8);
+            property = searchPropertyById(propertyId);
+        } while (property == null);
+        return property;
+    }
+
+    //получаем клиента
+    private static Client getClient() {
+        int clientId;
+        Client client;
+        do {
+            do {
+                System.out.println("Введите id клиента состоящее из 8 чисел: ");
+                while (!scanner.hasNextInt()) {
+                    System.out.println("Вы не ввели id!");
+                    System.out.println("Введите id клиента состоящее из 8 чисел: ");
+                    scanner.next();
+                }
+                clientId = scanner.nextInt();
+                if (String.valueOf(clientId).trim().length() != 8) {
+                    System.out.println("Вы ввели неправильное количество чисел");
+                }
+            } while (String.valueOf(clientId).trim().length() != 8);
+            client = searchClientById(clientId);
+        } while (client == null);
+        return client;
+    }
+
+    // получаем дату
+    private static LocalDate getLocalDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDate date = null;
+        do {
+            System.out.println("Введите дату сделки в формате: (dd.MM.yyyy).");
+            try {
+                String dateString = scanner.nextLine();
+                date = LocalDate.parse(dateString, formatter);
+            } catch (DateTimeParseException exception) {
+                log.error("Дата введена не правильно! Error: {}", exception.getMessage());
+            }
+        } while (date == null);
+        return date;
+    }
+
+    private static TransactionType getTransactionType() {
+        System.out.println("Введите тип сделки : (PURCHASE, SALE, RENT).");
+        TransactionType transactionType = TransactionType.fromStringTransactionTyp(scanner.nextLine().trim());
+        while (transactionType == TransactionType.NONE || transactionType == null) {
+            System.out.println("Вы указали неправильное значение Тип Недвижимости!");
+            System.out.println("Введите тип недвижимости как указано в скобках (APARTMENT, HOUSE, COMMERCIAL).");
+            transactionType = TransactionType.fromStringTransactionTyp(scanner.nextLine().trim());
+        }
+        return transactionType;
+    }
+
+    private static Double getTransactionAmount() {
+        System.out.println("Введите сумму сделки в $: ");
+        while (!scanner.hasNextDouble()) {
+            System.out.println("Введено неверное значение суммы сделки!");
+            System.out.println("Введите сумму цифрами пример: (99,99)");
+            scanner.next();
+        }
+        return scanner.nextDouble();
+
     }
 }
 
