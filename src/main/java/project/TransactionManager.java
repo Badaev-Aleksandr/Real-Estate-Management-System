@@ -23,6 +23,7 @@ import java.util.Set;
 public class TransactionManager {
     private static final File textFile = Path.of("src", "main", "resources", "transaction_base.txt").toFile();
     private static final File objectFile = Path.of("src", "main", "resources", "transaction_base.ser").toFile();
+    private static final File directory = Path.of("src", "main", "resources").toFile();
     private static Scanner scanner = new Scanner(System.in);
     private static Set<Transaction> transactionList = new HashSet<>(readObjectFile(objectFile));
     private static boolean transactionAdded = false; // флаг для сериализации клиентов если были добавлены новые
@@ -51,6 +52,7 @@ public class TransactionManager {
 
     // Сохранение сделки в текстовый файл
     private static void saveNewTransactionInTextFile(Transaction transaction) {
+        checkDirectoryFileExists();
         try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
             br.write(transaction.getId() + "," + transaction.getProperty().getId() + "," + transaction.getClient().getId()
                     + "," + transaction.getLocalDate() + "," + transaction.getTransactionType() + "," + transaction.getTransactionAmount());
@@ -231,8 +233,26 @@ public class TransactionManager {
             scanner.next();
         }
         return scanner.nextDouble();
+    } // проверка на наличие файла и папки
 
+    private static void checkDirectoryFileExists() {
+        if (directory.exists()) {
+            if (!directory.isDirectory()) {
+                System.out.println("Внимание папка с resources не найдена! Будет создана новая! " +
+                        directory.getName());
+                if (directory.mkdir()) {
+                    System.out.println("Создана новая папка: " + directory.getName());
+                    log.warn("Создана новая папка: {}", directory.getName());
+                } else
+                    System.out.println("Не удалось создать папку: " + directory.getName());
+            }
+        }
+        if (!textFile.exists()) {
+            System.out.println("Внимание текстовый файл: " + textFile.getName() + " не был найден. Будет создан новый!");
+            log.warn("Внимание текстовый файл: {} не был найден. Будет создан новый!", textFile.getName());
+        }
     }
+
 }
 
 

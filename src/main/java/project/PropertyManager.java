@@ -20,6 +20,7 @@ import java.util.Set;
 public class PropertyManager {
     private static final File textFile = Path.of("src", "main", "resources", "property_base.txt").toFile();
     private static final File objectFile = Path.of("src", "main", "resources", "property_base.ser").toFile();
+    private static final File directory = Path.of("src", "main", "resources").toFile();
     private static Scanner scanner = new Scanner(System.in);
     private static Set<Property> propertyList = new HashSet<>(readObjectFile(objectFile));
     private static boolean propertyAdded = false; //флаг для сериализации листа если добавлена новая недвижимость
@@ -28,43 +29,11 @@ public class PropertyManager {
     public static void addNewProperty() {
         System.out.println("Вы выбрали функцию Добавить объект недвижимости в базу данных!");
         int id = randomId(); // генерация рандом id
-        System.out.println("Введите адрес недвижимости: ");
-        System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
-        String address = scanner.nextLine().trim();
-        while (address.equalsIgnoreCase("")) {
-            System.out.println("Вы не ввели адрес!");
-            System.out.println("Введите адрес недвижимости: ");
-            System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
-            address = scanner.nextLine().trim();
-        }
-        System.out.println("Введите тип недвижимости: (APARTMENT, HOUSE, COMMERCIAL).");
-        PropertyTyp propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
-        while (propertyTyp == PropertyTyp.NONE || propertyTyp == null) {
-            System.out.println("Вы указали неправильное значение Тип Недвижимости!");
-            System.out.println("Введите тип недвижимости как указано в скобках (APARTMENT, HOUSE, COMMERCIAL).");
-            propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
-        }
-        System.out.println("Введите цену недвижимости в $ пример: (99,99)");
-        while (!scanner.hasNextDouble()) {
-            System.out.println("Введено неверное значение цены!");
-            System.out.println("Введите цену цифрами пример: (99,99)");
-            scanner.next();
-        }
-        double price = scanner.nextDouble();
-        System.out.println("Введите размер (кв. метры): ");
-        while (!scanner.hasNextDouble()) {
-            System.out.println("Введено неверное значение цены!");
-            System.out.println("Введите цену цифрами пример: (99,99)");
-            scanner.next();
-        }
-        double size = scanner.nextDouble();
-        System.out.println("Введите статус недвижимости (AVAILABLE, RESERVED, SOLD)");
-        PropertyStatus propertyStatus = PropertyStatus.fromStringPropertyStatus(scanner.next().trim());
-        while (propertyStatus == PropertyStatus.NONE || propertyStatus == null) {
-            System.out.println("Вы указали неправильное значение Статус Недвижимости!");
-            System.out.println("Введите статус недвижимости как указано в скобках (AVAILABLE, RESERVED, SOLD).");
-            propertyStatus = PropertyStatus.fromStringPropertyStatus(scanner.next());
-        }
+        String address = getAddressFromProperty();
+        PropertyTyp propertyTyp = getPropertyTypFromProperty();
+        double price = getPriceFromProperty("Введите цену недвижимости в $ пример: (99,99)");
+        double size = getPriceFromProperty("Введите размер (кв. метры): ");
+        PropertyStatus propertyStatus = getPropertyStatus();
         Property property = new Property(id, address, propertyTyp, price, size, propertyStatus);
         propertyAdded = propertyList.add(property);
         if (propertyAdded) {
@@ -79,6 +48,7 @@ public class PropertyManager {
 
     // Сохранение клиентов в текстовый файл
     private static void saveNewPropertyInTextFile(Property property) {
+        checkDirectoryFileExists();
         try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
             br.write(property.getId() + "," + property.getAddress() + "," + property.getPropertyTyp() + "," + property.getPrice() + "," +
                     property.getSize() + "," + property.getStatusOfProperty());
@@ -140,12 +110,76 @@ public class PropertyManager {
     }
 
     //генерирование рандом id для объекта
-    public static int randomId() {
+    private static int randomId() {
         int id = (int) (Math.random() * 90000000) + 10000000;
         if (propertyList.stream().anyMatch(property -> property.getId() == id)) {
             randomId();
         }
         return id;
+    }
+
+    private static String getAddressFromProperty() {
+        System.out.println("Введите адрес недвижимости: ");
+        System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
+        String address = scanner.nextLine().trim();
+        while (address.trim().isEmpty()) {
+            System.out.println("Вы не ввели адрес!");
+            System.out.println("Введите адрес недвижимости: ");
+            System.out.println("Пример ввода: (Индекс,Город,Улица,Дом,Квартира");
+            address = scanner.nextLine().trim();
+        }
+        return address;
+    }
+
+    private static PropertyTyp getPropertyTypFromProperty() {
+        System.out.println("Введите тип недвижимости: (APARTMENT, HOUSE, COMMERCIAL).");
+        PropertyTyp propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
+        while (propertyTyp == PropertyTyp.NONE || propertyTyp == null) {
+            System.out.println("Вы указали неправильное значение Тип Недвижимости!");
+            System.out.println("Введите тип недвижимости как указано в скобках (APARTMENT, HOUSE, COMMERCIAL).");
+            propertyTyp = PropertyTyp.fromStringPropertyTyp(scanner.nextLine().trim());
+        }
+        return propertyTyp;
+    }
+
+    private static Double getPriceFromProperty(String text) {
+        System.out.println(text);
+        while (!scanner.hasNextDouble()) {
+            System.out.println("Введено неверное значение!");
+            System.out.println(text);
+            scanner.next();
+        }
+        return scanner.nextDouble();
+    }
+
+    private static PropertyStatus getPropertyStatus() {
+        System.out.println("Введите статус недвижимости (AVAILABLE, RESERVED, SOLD)");
+        PropertyStatus propertyStatus = PropertyStatus.fromStringPropertyStatus(scanner.next().trim());
+        while (propertyStatus == PropertyStatus.NONE || propertyStatus == null) {
+            System.out.println("Вы указали неправильное значение Статус Недвижимости!");
+            System.out.println("Введите статус недвижимости как указано в скобках (AVAILABLE, RESERVED, SOLD).");
+            propertyStatus = PropertyStatus.fromStringPropertyStatus(scanner.nextLine().trim());
+        }
+        return propertyStatus;
+    }
+
+    // проверка на наличие файла и папки
+    private static void checkDirectoryFileExists() {
+        if (directory.exists()) {
+            if (!directory.isDirectory()) {
+                System.out.println("Внимание папка с resources не найдена! Будет создана новая! " +
+                        directory.getName());
+                if (directory.mkdir()) {
+                    System.out.println("Создана новая папка: " + directory.getName());
+                    log.warn("Создана новая папка: {}", directory.getName());
+                } else
+                    System.out.println("Не удалось создать папку: " + directory.getName());
+            }
+        }
+        if (!textFile.exists()) {
+            System.out.println("Внимание текстовый файл: " + textFile.getName() + " не был найден. Будет создан новый!");
+            log.warn("Внимание текстовый файл: {} не был найден. Будет создан новый!", textFile.getName());
+        }
     }
 
 

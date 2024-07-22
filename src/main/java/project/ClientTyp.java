@@ -1,17 +1,19 @@
 package project;
 
 public enum ClientTyp {
-    BAYER, SELLER, TENANT, NONE;
+    BUYER, SELLER, LEASER, LESSOR, NONE;
 
     //преобразуем String в Enum
     public static ClientTyp fromStringClientTyp(String typ) {
         if (typ != null) {
-            if (typ.equalsIgnoreCase(BAYER.toString())) {
-                return BAYER;
+            if (typ.equalsIgnoreCase(BUYER.toString())) {
+                return BUYER;
             } else if (typ.equalsIgnoreCase(SELLER.toString())) {
                 return SELLER;
-            } else if (typ.equalsIgnoreCase(TENANT.toString())) {
-                return TENANT;
+            } else if (typ.equalsIgnoreCase(LEASER.toString())) {
+                return LEASER;
+            } else if (typ.equalsIgnoreCase(LESSOR.toString())) {
+                return LESSOR;
             } else
                 return NONE;
         }

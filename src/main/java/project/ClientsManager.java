@@ -21,6 +21,7 @@ import java.util.Set;
 public class ClientsManager {
     private static final File textFile = Path.of("src", "main", "resources", "clients_base.txt").toFile();
     private static final File objectFile = Path.of("src", "main", "resources", "clients_base.ser").toFile();
+    private static final File directory = Path.of("src", "main", "resources").toFile();
     private static Scanner scanner = new Scanner(System.in);
     private static Set<Client> clientsList = new HashSet<>(readObjectFile(objectFile));
     private static boolean clientAdded = false; //флаг для сериализации листа если добавлены новые клиенты
@@ -29,27 +30,9 @@ public class ClientsManager {
     public static void addNewClient() {
         System.out.println("Вы выбрали функцию Добавить клиента.");
         int id = randomId();
-        System.out.println("Введите имя клиента: ");
-        String name = scanner.nextLine().trim();
-        while (name.equalsIgnoreCase("")) {
-            System.out.println("Вы не ввели имя!");
-            System.out.println("Введите имя клиента: ");
-            name = scanner.nextLine().trim();
-        }
-        System.out.println("Введите контактные данные клиента: ");
-        String contactDate = scanner.nextLine().trim();
-        while (contactDate.equalsIgnoreCase("")) {
-            System.out.println("Вы не ввели контактные данные!");
-            System.out.println("Введите контактные данные клиента: ");
-            contactDate = scanner.nextLine().trim();
-        }
-        System.out.println("Введите тип клиента: (BAYER, SELLER, TENANT).");
-        ClientTyp clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine().trim());
-        while (clientTyp == ClientTyp.NONE || clientTyp == null) {
-            System.out.println("Вы указали неправильное значение Тип Клиента!");
-            System.out.println("Введите тип клиента как указано в скобках (BAYER, SELLER, TENANT).");
-            clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine().trim());
-        }
+        String name = getNameFromUser();
+        String contactDate = getContactDateFromUser();
+        ClientTyp clientTyp = getClientTyp();
         Client client = new Client(id, name, contactDate, clientTyp);
         clientAdded = clientsList.add(client);
         if (clientAdded) {
@@ -64,7 +47,7 @@ public class ClientsManager {
 
     // Сохранение клиентов в текстовый файл
     private static void saveNewClientInTextFile(Client client) {
-        // проверка на наличие файла
+        checkDirectoryFileExists();
         try (BufferedWriter br = new BufferedWriter(new FileWriter(textFile, true))) {
             br.write(client.getId() + "," + client.getName() + "," + client.getContactDate() + "," + client.getClientTyp());
             br.newLine();
@@ -78,6 +61,10 @@ public class ClientsManager {
 
     //сериализация объектов в файл
     private static void saveNewClientInObjectFile(Set<Client> list) {
+        if (!objectFile.exists()) {
+            System.out.println("Внимание файл: " + objectFile.getName() + " с базой данных клиентов не был найден. Будет создан новый!");
+            log.warn("Внимание файл: {} с базой данных клиентов не был найден. Будет создан новый!", objectFile.getName());
+        }
         try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(objectFile))) {
             objectOutputStream.writeObject(list);
             log.info("Сериализация объектов прошла успешно в файл {}", objectFile.getName());
@@ -146,7 +133,7 @@ public class ClientsManager {
         int clientId = scanner.nextInt();
         Optional<Client> foundClient = clientsList.stream().filter(client -> client.getId() == clientId).findFirst();
         foundClient.ifPresentOrElse(Client::showAllClientTransaction,
-                () -> System.out.println("Клиента с id: " + clientId + " не найден!"));
+                () -> System.out.println("Клиент с id: " + clientId + " не найден!"));
     }
 
     //генерирование рандом id для объекта
@@ -157,6 +144,59 @@ public class ClientsManager {
         }
         return id;
     }
+
+    private static String getNameFromUser() {
+        System.out.println("Введите имя клиента: ");
+        String name = scanner.nextLine().trim();
+        while (name.trim().isEmpty()) {
+            System.out.println("Вы не ввели имя!");
+            System.out.println("Введите имя клиента: ");
+            name = scanner.nextLine().trim();
+        }
+        return name;
+    }
+
+    private static String getContactDateFromUser() {
+        System.out.println("Введите контактные данные клиента: ");
+        String contactDate = scanner.nextLine().trim();
+        while (contactDate.trim().isEmpty()) {
+            System.out.println("Вы не ввели контактные данные!");
+            System.out.println("Введите контактные данные клиента: ");
+            contactDate = scanner.nextLine().trim();
+        }
+        return contactDate;
+    }
+
+    private static ClientTyp getClientTyp() {
+        System.out.println("Введите тип клиента: (BUYER, SELLER, LEASER, LESSOR).");
+        ClientTyp clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine().trim());
+        while (clientTyp == ClientTyp.NONE || clientTyp == null) {
+            System.out.println("Вы указали неправильное значение Тип Клиента!");
+            System.out.println("Введите тип клиента как указано в скобках: (BUYER, SELLER, LEASER, LESSOR).");
+            clientTyp = ClientTyp.fromStringClientTyp(scanner.nextLine().trim());
+        }
+        return clientTyp;
+    }
+
+    // проверка на наличие файла и папки
+    private static void checkDirectoryFileExists() {
+        if (directory.exists()) {
+            if (!directory.isDirectory()) {
+                System.out.println("Внимание папка с resources не найдена! Будет создана новая! " +
+                        directory.getName());
+                if (directory.mkdir()) {
+                    System.out.println("Создана новая папка: " + directory.getName());
+                    log.warn("Создана новая папка: {}", directory.getName());
+                } else
+                    System.out.println("Не удалось создать папку: " + directory.getName());
+            }
+        }
+        if (!textFile.exists()) {
+            System.out.println("Внимание текстовый файл: " + textFile.getName() + " не был найден. Будет создан новый!");
+            log.warn("Внимание текстовый файл: {} не был найден. Будет создан новый!", textFile.getName());
+        }
+    }
+
 
     public static Set<Client> getClientsList() {
         return new HashSet<>(clientsList);

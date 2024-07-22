@@ -30,6 +30,7 @@ public class Main {
                 scanner.next();
             }
             numberFunction = scanner.nextInt();
+            scanner.nextLine();
             while (!(numberFunction > 0 && numberFunction < 8)) {
                 System.out.println("Вы ввели номер: " + numberFunction + ". Номера этой функции нет в списке меню!");
                 System.out.println("Введите цифру функции от 1 до 7 пожалуйста.");
@@ -39,6 +40,7 @@ public class Main {
                     scanner.next();
                 }
                 numberFunction = scanner.nextInt();
+                scanner.nextLine();
             }
             switch (numberFunction) {
                 case 1:
@@ -65,6 +67,7 @@ public class Main {
                     ClientsManager.exitFromApp();
                     TransactionManager.exitFromApp();
                     System.out.println("До новых встреч");
+                    scanner.close();
                     break;
                 default:
                     System.out.println("Сюда вы никогда не попадете!!!");
